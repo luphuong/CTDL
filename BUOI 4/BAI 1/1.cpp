@@ -23,8 +23,9 @@ void DemNode(List L);
 void FindX(List L);
 void RemoveHead(List &L);
 void RemoveTail(List &L);
-void RemoveNode(List &L);
-void Remove(List &L,Node *&p,int x);
+void DelNode(List &L);
+void SapXep(List &L);
+void AddNode(List &L);
 void main()
 {
 	List L;
@@ -47,8 +48,7 @@ Menu:
 		printf("4.Xoa mot nut dau hoac cuoi DSLK don\n");
 		printf("5.Xoa nut co du lieu bang X\n");
 		printf("6.Sap xep danh sach lien ket don theo chieu tang dan\n");
-		printf("7.Chen nut co du lieu Bang X,sao cho danh sach van tang\n");
-		printf("8.Thoat\n");
+		printf("7.Thoat\n");
 		printf("Lua Chon : ");
 		scanf("%d",&k);
 		switch(k)
@@ -98,43 +98,128 @@ Menu:
 			    system("pause");system("cls");goto Menu;
 			}
 		case 5:
-			RemoveNode(L);
+			DelNode(L);
 			xuat(L);
 			printf("\nEnter de tiep tu!!!\n");
 			system("pause");system("cls");goto Menu;
-		case 8:exit(0);
+		case 6:
+			SapXep(L);
+			xuat(L);
+			printf("\n");
+			printf("\nEnter de tiep tu!!!\n");
+			system("pause");system("cls");
+			xuat(L);
+			printf("\nChen nut Bang X vao DSLK\n");
+			printf("0.Tro lai\n");
+			printf("1.Tiep tuc\n");
+			printf("Lua Chon : ");
+			scanf("%d",&i);
+			switch(i)
+			{
+			case 0:
+				printf("\nEnter de tiep tu!!!\n");
+				system("cls");goto Menu;
+			case 1:
+				AddNode(L);
+				xuat(L);
+				printf("\nEnter de tiep tu!!!\n");
+				system("pause");system("cls");goto Menu;
+			}
+		case 7:exit(0);
 		}
 	}
 }
-void RemoveNode(List &L)
+void AddNode(List &L)
 {
-	Node*p=new Node;
+	int x;
+	printf("\nNhap X : ");
+	scanf("%d",&x);
+	Node*p=CreateNode(x);
+	if(L.pHead==NULL)
+		return;
+	if(L.pHead->info>x)
+	{
+		AddHead(L,p);
+		return;
+	}
+	if(L.pTail->info<x)
+	{
+		AddTail(L,p);
+		return;
+	}
+	int k=0;
+	for(Node*l=L.pHead;l!=NULL;l=l->pNext)
+	{
+		if(l->info<x)
+			k++;
+		else
+		{
+			k++;
+			break;
+		}
+	}
+	Node*q=new Node;
+	Node*w=new Node;
+	Node*r=L.pHead;
+	int dem=0;
+	while(r!=NULL)
+	{
+		dem++;
+		q=r;
+		if(dem==k)
+			break;
+		else
+			r=r->pNext;
+	}
+	w=L.pHead;
+	while(w->pNext!=q)
+		w=w->pNext;
+	w->pNext=p;
+	p->pNext=r;
+}
+void SapXep(List &L)
+{
+	Node *p,*q;
+	for(p=L.pHead;p!=L.pTail;p=p->pNext)
+	{
+		Node *min=p;
+		for(q=p->pNext;q!=NULL;q=q->pNext)
+			if(q->info<min->info)
+				min=q;
+		int tmp=p->info;
+		p->info=min->info;
+		min->info=tmp;
+	}
+}
+void DelNode(List &L)
+{
 	int x;
 	printf("Nhap X : ");
 	scanf("%d",&x);
-	for(p=L.pHead;p!=NULL;p=p->pNext)
+	if(L.pHead==NULL)
+		return;
+	if(L.pHead->info==x)
+	{
+		RemoveHead(L);
+		return;
+	}
+	if(L.pTail->info==x)
+	{
+		RemoveTail(L);
+		return;
+	}
+	Node*q=new Node;
+	for(Node*p=L.pHead;p!=NULL;p=p->pNext)
 	{
 		if(p->info==x)
-			Remove(L,p,x);
+		{
+			q->pNext=p->pNext;
+			delete p;
+			return;
+		}
+		q=p;
 	}
-}
-void Remove(List &L,Node *&phead,int x)
-{
-	Node *virtualnode=new Node;
-     virtualnode->pNext=phead;
-     phead=virtualnode;
-     Node *q;
-     for(Node *p=phead;p->pNext!=NULL;p=p->pNext)
-	 {
-             if(p->pNext->info==x)
-             {
-                 q=p->pNext; 
-                 p->pNext=q->pNext;
-                 delete q;
-             }
-	 }
-     phead=phead->pNext;
-     delete virtualnode;
+	printf("\nX khong co trong DSLK\n");
 }
 void RemoveTail(List &L)
 {
